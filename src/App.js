@@ -54,6 +54,8 @@ import { useMaterialUIController, setMiniSidenav, setOpenConfigurator } from "co
 import brandWhite from "assets/images/logo-ct.png";
 import brandDark from "assets/images/logo-ct-dark.png";
 
+import {useUserController, setLogin} from "./context/user";
+
 export default function App() {
   const [controller, dispatch] = useMaterialUIController();
   const {
@@ -69,21 +71,23 @@ export default function App() {
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const [rtlCache, setRtlCache] = useState(null);
   const { pathname } = useLocation();
-  const [isLogin, setIsLogin] = useState(true);
+  const [UserController, dispatchUser] = useUserController();
+  const {
+    login,
+    access,
+    refresh_access
+    } = UserController;
 
   // useEffect(()=>{
   //   $.ajax({
   //     'url': "http://localhost:8000/settings/getstatus/",
-  //     xhrFields: {
-  //       withCredentials: true
-  //     },
   //     type: "get",
   //     success: resp => {
   //       console.log(resp);
   //       if(resp.result === "login") {
-  //         setIsLogin(true);
+  //         setLogin(true);
   //       } else {
-  //         setIsLogin(false);
+  //         setLogin(false);
   //       }
   //     }
   //   })
@@ -166,35 +170,10 @@ export default function App() {
     </MDBox>
   );
 
-  return direction === "rtl" ? (
-    <CacheProvider value={rtlCache}>
-      <ThemeProvider theme={darkMode ? themeDarkRTL : themeRTL}>
-        <CssBaseline />
-        {layout === "dashboard" && (
-          <>
-            <Sidenav
-              color={sidenavColor}
-              brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
-              brandName="Material Dashboard 2"
-              routes={routes}
-              onMouseEnter={handleOnMouseEnter}
-              onMouseLeave={handleOnMouseLeave}
-            />
-            <Configurator />
-            {configsButton}
-          </>
-        )}
-        {layout === "vr" && <Configurator />}
-        <Routes>
-          {getRoutes(routes)}
-          <Route path="*" element={<Navigate to="/dashboard" />} />
-        </Routes>
-      </ThemeProvider>
-    </CacheProvider>
-  ) : (
+  return (
     <ThemeProvider theme={darkMode ? themeDark : theme}>
       <CssBaseline />
-      {isLogin && layout === "dashboard" && (
+      {login && layout === "dashboard" && (
         <>
           <Sidenav
             color={sidenavColor}
@@ -208,7 +187,7 @@ export default function App() {
           {configsButton}
         </>
       )}
-      {!isLogin && layout === "vr"}
+      {!login && layout === "vr"}
       <Routes>
         {getRoutes(routes)}
         <Route path="*" element={<Navigate to="/authentication/sign-in" />} />
