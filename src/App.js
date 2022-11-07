@@ -13,6 +13,7 @@ Coded by www.creative-tim.com
 * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
 */
 
+import $ from 'jquery';
 import { useState, useEffect, useMemo } from "react";
 
 // react-router components
@@ -69,6 +70,21 @@ export default function App() {
   const [rtlCache, setRtlCache] = useState(null);
   const { pathname } = useLocation();
   const [isLogin, setIsLogin] = useState(false);
+
+  useEffect(()=>{
+    $.ajax({
+      'url': "http://localhost:8000/settings/getstatus/",
+      type: "get",
+      success: resp => {
+        console.log(resp);
+        if(resp.result === "login") {
+          setIsLogin(true);
+        } else {
+          setIsLogin(false);
+        }
+      }
+    })
+  }, [])
 
   // Cache for the rtl
   useMemo(() => {
@@ -175,7 +191,7 @@ export default function App() {
   ) : (
     <ThemeProvider theme={darkMode ? themeDark : theme}>
       <CssBaseline />
-      {layout === "dashboard" && (
+      {isLogin && layout === "dashboard" && (
         <>
           <Sidenav
             color={sidenavColor}
@@ -189,10 +205,10 @@ export default function App() {
           {configsButton}
         </>
       )}
-      {layout === "vr" && <Configurator />}
+      {!isLogin && layout === "vr"}
       <Routes>
         {getRoutes(routes)}
-        {/*<Route path="*" element={<Navigate to="/dashboard" />} />*/}
+        <Route path="*" element={<Navigate to="/authentication/sign-in" />} />
       </Routes>
     </ThemeProvider>
   );
