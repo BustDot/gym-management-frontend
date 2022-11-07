@@ -69,22 +69,25 @@ export default function App() {
   const [onMouseEnter, setOnMouseEnter] = useState(false);
   const [rtlCache, setRtlCache] = useState(null);
   const { pathname } = useLocation();
-  const [isLogin, setIsLogin] = useState(false);
+  const [isLogin, setIsLogin] = useState(true);
 
-  useEffect(()=>{
-    $.ajax({
-      'url': "http://localhost:8000/settings/getstatus/",
-      type: "get",
-      success: resp => {
-        console.log(resp);
-        if(resp.result === "login") {
-          setIsLogin(true);
-        } else {
-          setIsLogin(false);
-        }
-      }
-    })
-  }, [])
+  // useEffect(()=>{
+  //   $.ajax({
+  //     'url': "http://localhost:8000/settings/getstatus/",
+  //     xhrFields: {
+  //       withCredentials: true
+  //     },
+  //     type: "get",
+  //     success: resp => {
+  //       console.log(resp);
+  //       if(resp.result === "login") {
+  //         setIsLogin(true);
+  //       } else {
+  //         setIsLogin(false);
+  //       }
+  //     }
+  //   })
+  // }, [])
 
   // Cache for the rtl
   useMemo(() => {

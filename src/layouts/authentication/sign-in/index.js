@@ -58,6 +58,9 @@ function Basic() {
       console.log(username);
       $.ajax({
         url: "http://localhost:8000/settings/signin/",
+        xhrFields: {
+          withCredentials: true
+        },
         type: "post",
         data: {
           username: username,
