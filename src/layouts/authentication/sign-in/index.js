@@ -42,25 +42,30 @@ import BasicLayout from "layouts/authentication/components/BasicLayout";
 // Images
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 
+import {useUserController, setLogin} from "src/context/user";
+
+
 function Basic() {
   const [rememberMe, setRememberMe] = useState(false);
-  const [username, setUsername] = useState("");
+  const [loginUsername, setLoginUsername] = useState("");
   const [password, setPassword] = useState("");
   const [errorMessage, setErrorMessage] = useState("");
+  const [UserController, dispatchUser] = useUserController();
+
 
   const handleLogin = () => {
 
-    if (username === "") {
+    if (loginUsername === "") {
       setErrorMessage("邮箱不能为空");
     } else if (password === "") {
       setErrorMessage("密码不能为空");
     } else {
-      console.log(username);
+      console.log(loginUsername);
       $.ajax({
         url: "http://localhost:8000/settings/signin/",
         type: "post",
         data: {
-          username: username,
+          username: loginUsername,
           password: password,
         },
         dataType: "json",
@@ -115,7 +120,7 @@ function Basic() {
         <MDBox pt={4} pb={3} px={3}>
           <MDBox component="form" role="form">
             <MDBox mb={2}>
-              <MDInput onChange={e => setUsername(e.target.value)} type="email" label="邮箱" fullWidth />
+              <MDInput onChange={e => setLoginUsername(e.target.value)} type="email" label="邮箱" fullWidth />
             </MDBox>
             <MDBox mb={2}>
               <MDInput onChange={e => setPassword(e.target.value)} type="password" label="密码" fullWidth />

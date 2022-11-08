@@ -75,7 +75,7 @@ export default function App() {
   const {
     login,
     access,
-    refresh_access
+    refresh
     } = UserController;
 
   // useEffect(()=>{

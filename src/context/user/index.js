@@ -7,7 +7,7 @@ import PropTypes from "prop-types";
 const userContext = createContext();
 
 // Setting custom name for the context which is visible on react dev tools
-userContext.displayName = "MaterialUIContext";
+userContext.displayName = "UserContext";
 
 // Material Dashboard 2 React reducer
 function reducer(state, action) {
@@ -21,8 +21,8 @@ function reducer(state, action) {
         case "ACCESS": {
             return { ...state, access: action.value };
         }
-        case "REFRESH-ACCESS": {
-            return { ...state, refresh_access: action.value };
+        case "REFRESH": {
+            return { ...state, refresh: action.value };
         }
         case "ADMIN": {
             return { ...state, admin: action.value };
@@ -39,7 +39,7 @@ function UserControllerProvider({ children }) {
         username: "",
         login: false,
         access: "",
-        refresh_access: "",
+        refresh: "",
         admin: false,
     };
 
@@ -56,7 +56,7 @@ function useUserController() {
 
     if (!context) {
         throw new Error(
-            "useMaterialUIController should be used inside the MaterialUIControllerProvider."
+            "useUserController should be used inside the MaterialUIControllerProvider."
         );
     }
 
@@ -72,7 +72,7 @@ UserControllerProvider.propTypes = {
 const setUsername = (dispatch, value) => dispatch({ type: "USERNAME", value });
 const setLogin = (dispatch, value) => dispatch({ type: "LOGIN", value });
 const setAccess = (dispatch, value) => dispatch({ type: "ACCESS", value });
-const setRefreshAccess = (dispatch, value) => dispatch({ type: "REFRESH-ACCESS", value });
+const setRefresh = (dispatch, value) => dispatch({ type: "REFRESH", value });
 const setAdmin = (dispatch, value) => dispatch({ type: "ADMIN", value });
 
 export {
@@ -81,6 +81,6 @@ export {
     setUsername,
     setLogin,
     setAccess,
-    setRefreshAccess,
+    setRefresh,
     setAdmin,
 };
