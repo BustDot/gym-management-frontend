@@ -13,7 +13,7 @@
  * The above copyright notice and this permission notice shall be included in all copies or substantial portions of the Software.
  */
 
-import {useEffect, useMemo, useState} from "react";
+import {useEffect, useState} from "react";
 
 // react-router components
 import {Navigate, Route, Routes, useLocation} from "react-router-dom";
@@ -37,9 +37,6 @@ import theme from "assets/theme";
 import themeDark from "assets/theme-dark";
 
 // RTL plugins
-import rtlPlugin from "stylis-plugin-rtl";
-import createCache from "@emotion/cache";
-
 // Material Dashboard 2 React routes
 import routes from "routes";
 
@@ -56,7 +53,7 @@ import {useUserController} from "./context/user";
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
 import Dashboard from "./layouts/dashboard";
-
+import Tables from "./layouts/tables";
 
 export default function App() {
     const [controller, dispatch] = useMaterialUIController();
@@ -93,16 +90,6 @@ export default function App() {
     //     }
     //   })
     // }, [])
-
-    // Cache for the rtl
-    useMemo(() => {
-        const cacheRtl = createCache({
-            key: "rtl",
-            stylisPlugins: [rtlPlugin],
-        });
-
-        setRtlCache(cacheRtl);
-    }, []);
 
     // Open sidenav when mouse enter on mini sidenav
     const handleOnMouseEnter = () => {
@@ -190,9 +177,14 @@ export default function App() {
             )}
             <Routes>
                 {/*{getRoutes(routes)}*/}
-                <Route path="/dashboard" element={login ? <Dashboard/> : <SignIn/>}/>
-                <Route path="/authentication/sign-in" element={login ? <Dashboard/> : <SignIn/>}/>
-                <Route path="/authentication/sign-up" element={login ? <Dashboard/> : <SignUp/>}/>
+                <Route path="/dashboard"
+                       element={login ? <Dashboard/> : <Navigate replace to="/authentication/sign-in"/>}/>
+                <Route path="/users"
+                       element={login ? <Tables/> : <Navigate replace to="/authentication/sign-in"/>}/>
+                <Route path="/authentication/sign-in"
+                       element={login ? <Navigate replace to="/dashboard"/> : <SignIn/>}/>
+                <Route path="/authentication/sign-up"
+                       element={login ? <Navigate replace to="/dashboard"/> : <SignUp/>}/>
                 <Route path="/*" element={<Navigate replace to="/authentication/sign-in"/>}/>
             </Routes>
         </ThemeProvider>

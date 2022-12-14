@@ -56,10 +56,10 @@ const routes = [
     },
     {
         type: "collapse",
-        name: "Tables",
-        key: "tables",
-        icon: <Icon fontSize="small">table_view</Icon>,
-        route: "/tables",
+        name: "用户管理",
+        key: "users",
+        icon: <Icon fontSize="small">person</Icon>,
+        route: "/users",
         component: <Tables/>,
     },
     {
