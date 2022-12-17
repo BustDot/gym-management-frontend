@@ -43,7 +43,7 @@ import BasicLayout from "layouts/authentication/components/BasicLayout";
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 
 import {setLogin, useUserController} from "../../../context/user";
-
+import {setRefresh, setToken} from "../../../utils/localtoken";
 
 function Basic() {
     const [rememberMe, setRememberMe] = useState(false);
@@ -62,7 +62,7 @@ function Basic() {
         } else {
             console.log(loginUsername);
             $.ajax({
-                url: "http://localhost:8000/settings/signin/",
+                url: "http://localhost:8000/settings/token/",
                 type: "post",
                 data: {
                     username: loginUsername,
@@ -70,13 +70,16 @@ function Basic() {
                 },
                 dataType: "json",
                 success: resp => {
-                    if (resp.result === "success") {
-                        setLogin(dispatchUser, true);
-                        navigate("/dashboard");
-                    } else {
-                        setErrorMessage(resp.result);
-                    }
+                    const {access, refresh} = resp;
+                    setToken(access);
+                    setRefresh(refresh);
+                    setLogin(dispatchUser, true);
+                    navigate("/dashboard");
+                },
+                error: () => {
+                    setErrorMessage("账号或密码错误");
                 }
+
             });
         }
     }

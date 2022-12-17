@@ -47,13 +47,18 @@ import {setMiniSidenav, setOpenConfigurator, useMaterialUIController} from "cont
 import brandWhite from "assets/images/logo-ct.png";
 import brandDark from "assets/images/logo-ct-dark.png";
 
-import {useUserController} from "./context/user";
+import {setLogin, useUserController} from "./context/user";
 
 // Path configuration
 import SignIn from "layouts/authentication/sign-in";
 import SignUp from "layouts/authentication/sign-up";
 import Dashboard from "./layouts/dashboard";
 import Tables from "./layouts/tables";
+import Profile from "./layouts/profile";
+
+import {getToken, hasToken, removeFresh, removeToken} from "./utils/localtoken";
+import $ from "jquery";
+import jwt_decode from 'jwt-decode';
 
 export default function App() {
     const [controller, dispatch] = useMaterialUIController();
@@ -76,20 +81,32 @@ export default function App() {
         refresh
     } = UserController;
 
-    // useEffect(()=>{
-    //   $.ajax({
-    //     'url': "http://localhost:8000/settings/getstatus/",
-    //     type: "get",
-    //     success: resp => {
-    //       console.log(resp);
-    //       if(resp.result === "login") {
-    //         setLogin(true);
-    //       } else {
-    //         setLogin(false);
-    //       }
-    //     }
-    //   })
-    // }, [])
+    useEffect(() => {
+        if (hasToken()) {
+            const jwt_token = getToken();
+            const access_obj = jwt_decode(jwt_token);
+            $.ajax({
+                'url': "http://localhost:8000/settings/getinfo/",
+                type: "get",
+                headers: {
+                    'Authorization': "Bearer " + jwt_token,
+                },
+                data: {
+                    user_id: access_obj.user_id,
+                },
+                success: resp => {
+                    console.log(resp);
+                    if (resp.result === "success") {
+                        setLogin(dispatchUser, true);
+                    } else {
+                        removeToken();
+                        removeFresh();
+                        setLogin(dispatchUser, false);
+                    }
+                }
+            })
+        }
+    }, [])
 
     // Open sidenav when mouse enter on mini sidenav
     const handleOnMouseEnter = () => {
@@ -161,7 +178,7 @@ export default function App() {
     return (
         <ThemeProvider theme={darkMode ? themeDark : theme}>
             <CssBaseline/>
-            {login && layout === "dashboard" && (
+            {hasToken() && layout === "dashboard" && (
                 <>
                     <Sidenav
                         color={sidenavColor}
@@ -178,13 +195,15 @@ export default function App() {
             <Routes>
                 {/*{getRoutes(routes)}*/}
                 <Route path="/dashboard"
-                       element={login ? <Dashboard/> : <Navigate replace to="/authentication/sign-in"/>}/>
+                       element={hasToken() ? <Dashboard/> : <Navigate replace to="/authentication/sign-in"/>}/>
+                <Route path="/users/:user_id"
+                       element={hasToken() ? <Profile/> : <Navigate replace to="/authentication/sign-in"/>}/>
                 <Route path="/users"
-                       element={login ? <Tables/> : <Navigate replace to="/authentication/sign-in"/>}/>
+                       element={hasToken() ? <Tables/> : <Navigate replace to="/authentication/sign-in"/>}/>
                 <Route path="/authentication/sign-in"
-                       element={login ? <Navigate replace to="/dashboard"/> : <SignIn/>}/>
+                       element={hasToken() ? <Navigate replace to="/dashboard"/> : <SignIn/>}/>
                 <Route path="/authentication/sign-up"
-                       element={login ? <Navigate replace to="/dashboard"/> : <SignUp/>}/>
+                       element={hasToken() ? <Navigate replace to="/dashboard"/> : <SignUp/>}/>
                 <Route path="/*" element={<Navigate replace to="/authentication/sign-in"/>}/>
             </Routes>
         </ThemeProvider>

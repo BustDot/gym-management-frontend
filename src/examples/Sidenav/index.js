@@ -44,6 +44,7 @@ import {setMiniSidenav, setTransparentSidenav, setWhiteSidenav, useMaterialUICon
 
 // user context
 import {setLogin, useUserController} from "../../context/user";
+import {removeFresh, removeToken} from "../../utils/localtoken";
 
 function Sidenav({color, brand, brandName, routes, ...rest}) {
     const [controller, dispatch] = useMaterialUIController();
@@ -142,6 +143,8 @@ function Sidenav({color, brand, brandName, routes, ...rest}) {
 
     const handleLogOut = () => {
         setLogin(dispatchUser, false);
+        removeToken();
+        removeFresh();
         navigate("/authentication/sign-in");
     }
 

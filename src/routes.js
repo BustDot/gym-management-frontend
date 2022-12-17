@@ -83,7 +83,7 @@ const routes = [
         name: "Profile",
         key: "profile",
         icon: <Icon fontSize="small">person</Icon>,
-        route: "/profile",
+        route: "/user",
         component: <Profile/>,
     },
 ];

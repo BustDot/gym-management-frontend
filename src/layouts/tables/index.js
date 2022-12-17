@@ -26,8 +26,7 @@ import DashboardLayout from "examples/LayoutContainers/DashboardLayout";
 import DashboardNavbar from "examples/Navbars/DashboardNavbar";
 import Footer from "examples/Footer";
 import DataTable from "examples/Tables/DataTable";
-import $ from "jquery";
-import {useState} from "react";
+import {useEffect, useState} from "react";
 import MDAvatar from "../../components/MDAvatar";
 
 // Data
@@ -44,7 +43,6 @@ const Author = ({image, name}) => (
 
 function Tables() {
     // const {columns, rows} = authorsTableData();
-    const [users, setUsers] = useState([])
     const [rows, setRows] = useState([])
     const columns = [
         {Header: "姓名", accessor: "name", width: "35%", align: "left"},
@@ -55,32 +53,32 @@ function Tables() {
         {Header: "操作", accessor: "action", align: "center"}
     ]
 
-    $.ajax({
-        url: "http://localhost:8000/sysuser/list/",
-        type: "get",
-        success: resp => {
-            if (resp.result === "success") {
-                const temp_row = []
-                setUsers(resp.data)
-                users.forEach((user) => {
-                    temp_row.push({
-                        name: <Author image={user.avatar} name={user.name}/>,
-                        gender: user.gender,
-                        phone: user.phone,
-                        card_time: user.card_time,
-                        left_time: user.card_left_time,
-                        action: (
-                            <MDTypography component="a" href="#" variant="caption" color="text" fontWeight="medium">
-                                编辑
-                            </MDTypography>
-                        ),
+    useEffect(() => {
+        fetch("http://localhost:8000/sysuser/list/")
+            .then((res) => res.json())
+            .then((data) => {
+                if (data.result === "success") {
+                    const temp_row = []
+                    data.data.forEach((user) => {
+                        temp_row.push({
+                            name: <Author image={user.avatar} name={user.name}/>,
+                            gender: user.gender,
+                            phone: user.phone,
+                            card_time: user.card_time,
+                            left_time: user.card_left_time,
+                            action: (
+                                <MDTypography component="a" href={"/users/" + user.user_id} variant="caption"
+                                              color="text"
+                                              fontWeight="medium">
+                                    详情
+                                </MDTypography>
+                            ),
+                        })
                     })
-                })
-                setRows(temp_row)
-            }
-        }
-    });
-
+                    setRows(temp_row)
+                }
+            })
+    }, [])
 
     return (
         <DashboardLayout>
