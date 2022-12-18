@@ -59,6 +59,8 @@ import Profile from "./layouts/profile";
 import {getToken, hasToken, removeFresh, removeToken} from "./utils/localtoken";
 import $ from "jquery";
 import jwt_decode from 'jwt-decode';
+import CoachTables from "./layouts/tables/coachtable";
+import CourseTables from "./layouts/tables/coursetable";
 
 export default function App() {
     const [controller, dispatch] = useMaterialUIController();
@@ -200,6 +202,10 @@ export default function App() {
                        element={hasToken() ? <Profile/> : <Navigate replace to="/authentication/sign-in"/>}/>
                 <Route path="/users"
                        element={hasToken() ? <Tables/> : <Navigate replace to="/authentication/sign-in"/>}/>
+                <Route path="/coaches"
+                       element={hasToken() ? <CoachTables/> : <Navigate replace to="/authentication/sign-in"/>}/>
+                <Route path="/courses"
+                       element={hasToken() ? <CourseTables/> : <Navigate replace to="/authentication/sign-in"/>}/>
                 <Route path="/authentication/sign-in"
                        element={hasToken() ? <Navigate replace to="/dashboard"/> : <SignIn/>}/>
                 <Route path="/authentication/sign-up"

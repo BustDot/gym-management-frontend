@@ -46,7 +46,7 @@ function Tables() {
     const [rows, setRows] = useState([])
     const columns = [
         {Header: "姓名", accessor: "name", width: "35%", align: "left"},
-        {Header: "性别", accessor: "gender", align: "left"},
+        {Header: "性别", accessor: "gender", align: "center"},
         {Header: "手机号", accessor: "phone", align: "center"},
         {Header: "购买课时", accessor: "card_time", align: "center"},
         {Header: "剩余课时", accessor: "left_time", align: "center"},
@@ -104,8 +104,9 @@ function Tables() {
                             <MDBox pt={3}>
                                 <DataTable
                                     table={{columns, rows}}
-                                    isSorted={false}
+                                    isSorted={true}
                                     showTotalEntries={false}
+                                    canSearch={true}
                                     noEndBorder
                                 />
                             </MDBox>

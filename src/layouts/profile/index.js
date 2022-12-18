@@ -18,10 +18,6 @@ import Grid from "@mui/material/Grid";
 import Divider from "@mui/material/Divider";
 
 // @mui icons
-import FacebookIcon from "@mui/icons-material/Facebook";
-import TwitterIcon from "@mui/icons-material/Twitter";
-import InstagramIcon from "@mui/icons-material/Instagram";
-
 // Material Dashboard 2 React components
 import MDBox from "components/MDBox";
 import MDTypography from "components/MDTypography";
@@ -83,28 +79,7 @@ function Overview() {
                             <ProfileInfoCard
                                 title="个人信息"
                                 description="欢迎来到宏德健身房，您是尊贵的会员，好好吃饭，好好生活，不要让健身成为您的负担哦!"
-                                info={{
-                                    Name: userData.name,
-                                    mobile: userData.phone,
-                                    Age: userData.age
-                                }}
-                                social={[
-                                    {
-                                        link: "https://www.facebook.com/CreativeTim/",
-                                        icon: <FacebookIcon/>,
-                                        color: "facebook",
-                                    },
-                                    {
-                                        link: "https://twitter.com/creativetim",
-                                        icon: <TwitterIcon/>,
-                                        color: "twitter",
-                                    },
-                                    {
-                                        link: "https://www.instagram.com/creativetimofficial/",
-                                        icon: <InstagramIcon/>,
-                                        color: "instagram",
-                                    },
-                                ]}
+                                user_id={user_id}
                                 action={{route: "", tooltip: "编辑信息"}}
                                 shadow={false}
                             />
