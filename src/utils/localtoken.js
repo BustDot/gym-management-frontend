@@ -1,5 +1,6 @@
 const TOKEN_KEY = 'jwt_token'
 const REFRESH_KEY = 'jwt_refresh'
+const ADMIN_KEY = 'admin'
 
 // 获取 token
 export function getToken() {
@@ -39,4 +40,23 @@ export function removeFresh() {
 // 判断有无 token
 export function hasRefresh() {
     return !!getRefresh()
+}
+
+export function getAdmin() {
+    return localStorage.getItem(ADMIN_KEY)
+}
+
+// 本地存储 token
+export function setLocalAdmin(token) {
+    localStorage.setItem(ADMIN_KEY, token)
+}
+
+// 删除 token
+export function removeAdmin() {
+    localStorage.removeItem(ADMIN_KEY)
+}
+
+// 判断有无 token
+export function hasAdmin() {
+    return !!getAdmin()
 }

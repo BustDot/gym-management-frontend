@@ -133,19 +133,19 @@ function ProfileInfoCard({title, description, user_id, action, shadow}) {
                         <MDTypography variant="button" fontWeight="bold" textTransform="capitalize">
                             姓名: &nbsp;
                         </MDTypography>
-                        <MDInput onChange={e => setEditName(e.target.value)} type="text" label="姓名" value={name}/>
+                        <MDInput onChange={e => setEditName(e.target.value)} type="text" label="姓名"/>
                     </MDBox>
                     <MDBox display="flex" alignItems="center" py={1} pr={2}>
                         <MDTypography variant="button" fontWeight="bold" textTransform="capitalize">
                             年龄: &nbsp;
                         </MDTypography>
-                        <MDInput onChange={e => setEditAge(e.target.value)} type="number" label="年龄" value={age}/>
+                        <MDInput onChange={e => setEditAge(e.target.value)} type="number" label="年龄"/>
                     </MDBox>
                     <MDBox display="flex" alignItems="center" py={1} pr={2}>
                         <MDTypography variant="button" fontWeight="bold" textTransform="capitalize">
                             手机: &nbsp;
                         </MDTypography>
-                        <MDInput onChange={e => setEditPhone(e.target.value)} type="tel" label="手机" value={phone}/>
+                        <MDInput onChange={e => setEditPhone(e.target.value)} type="tel" label="手机"/>
                     </MDBox>
                 </MDBox>
                 }

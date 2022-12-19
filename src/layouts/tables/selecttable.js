@@ -32,6 +32,7 @@ import Icon from "@mui/material/Icon";
 import MDInput from "../../components/MDInput";
 import {getToken, hasToken} from "../../utils/localtoken";
 import Autocomplete from "@mui/material/Autocomplete";
+import {useUserController} from "../../context/user";
 
 // Data
 const Author = ({name}) => (
@@ -44,7 +45,11 @@ const Author = ({name}) => (
     </MDBox>
 );
 
-function CourseTables() {
+function SelectTables() {
+    const [UserController, dispatchUser] = useUserController();
+    const {
+        username
+    } = UserController;
     const [rows, setRows] = useState([])
     const [addCourse, setAddCourse] = useState(false);
 
@@ -80,8 +85,53 @@ function CourseTables() {
             })
     }
 
+    const handleSelect = (course, sys_user, coach) => {
+        if (hasToken()) {
+            const data = {
+                course: course,
+                sys_user: sys_user,
+                coach: coach
+            }
+            const jwt_token = getToken();
+            fetch("http://localhost:8000/courseorder/" + username + "/", {
+                method: "POST",
+                headers: {
+                    'Authorization': "Bearer " + jwt_token,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            }).then(res => res.json())
+                .then(data => {
+                    if (data.result === 'error') {
+                        alert("余额不足！请在个人信息页面充值！")
+                    }
+                    console.log(data);
+                    updateCourseList();
+                })
+        }
+    }
+
+    const handleDelete = (course, sys_user, coach) => {
+        if (hasToken()) {
+            const data = {
+                course: course,
+                sys_user: sys_user,
+                coach: coach
+            }
+            const jwt_token = getToken();
+            fetch("http://localhost:8000/courseorder/" + username + "/", {
+                method: "DELETE",
+                headers: {
+                    'Authorization': "Bearer " + jwt_token,
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify(data)
+            }).then(res => updateCourseList())
+        }
+    }
+
     const updateCourseList = () => {
-        fetch("http://localhost:8000/course/")
+        fetch("http://localhost:8000/courseorder/list/" + username + "/")
             .then((res) => res.json())
             .then((data) => {
                 if (data.result === "success") {
@@ -89,19 +139,26 @@ function CourseTables() {
                     data.data.forEach((course) => {
                         const startTime = new Date(course.course_begin);
                         temp_row.push({
-                            name: <Author name={course.course_name}/>,
+                            name: course.course_name,
                             time: startTime.toLocaleString('chinese', {hour12: false}),
                             duration: course.course_last,
                             coach: course.coach_name,
-                            action: (
-                                <MDTypography
-                                    onClick={() => handleDelete(course.id)}
-                                    variant="caption"
-                                    color="error"
-                                    fontWeight="medium"
-                                    sx={{cursor: "pointer"}}>
-                                    删除
-                                </MDTypography>
+                            action: (course.is_selected ? <MDTypography
+                                        onClick={() => handleDelete(course.id, username, course.coach)}
+                                        variant="caption"
+                                        color="error"
+                                        fontWeight="medium"
+                                        sx={{cursor: "pointer"}}>
+                                        退选
+                                    </MDTypography> :
+                                    <MDTypography
+                                        onClick={() => handleSelect(course.id, username, course.coach)}
+                                        variant="caption"
+                                        color="text"
+                                        fontWeight="medium"
+                                        sx={{cursor: "pointer"}}>
+                                        选课
+                                    </MDTypography>
                             ),
                         })
                     })
@@ -134,22 +191,13 @@ function CourseTables() {
                 body: JSON.stringify(data)
             }).then(res => res.json())
                 .then(data => {
-                    updateCourseList();
+                    // setName(data.name);
+                    // setTime(data.age);
+                    // setDuration(data.phone);
                 })
-                .then(() => openAddCoach());
         }
-    }
-
-    const handleDelete = (id) => {
-        if (hasToken()) {
-            const jwt_token = getToken();
-            fetch("http://localhost:8000/course/" + id + "/", {
-                method: "DELETE",
-                headers: {
-                    'Authorization': "Bearer " + jwt_token,
-                }
-            }).then(res => updateCourseList())
-        }
+        updateCourseList();
+        openAddCoach();
     }
 
     return (
@@ -170,14 +218,8 @@ function CourseTables() {
                                 coloredShadow="info"
                             >
                                 <MDTypography variant="h6" color="white" mt={0.8} sx={{float: "left"}}>
-                                    课程管理
+                                    课程选择
                                 </MDTypography>
-                                <MDBox sx={{float: "right"}}>
-                                    <MDButton variant="gradient" color="dark" onClick={openAddCoach}>
-                                        <Icon sx={{fontWeight: "bold"}}>add</Icon>
-                                        &nbsp;添加课程
-                                    </MDButton>
-                                </MDBox>
                             </MDBox>
                             <MDBox pt={3}>
                                 {!addCourse && <DataTable
@@ -248,4 +290,4 @@ function CourseTables() {
     );
 }
 
-export default CourseTables;
+export default SelectTables;

@@ -42,8 +42,17 @@ import BasicLayout from "layouts/authentication/components/BasicLayout";
 // Images
 import bgImage from "assets/images/bg-sign-in-basic.jpeg";
 
-import {setLogin, useUserController} from "../../../context/user";
-import {setRefresh, setToken} from "../../../utils/localtoken";
+import {setLogin, setUsername, useUserController} from "../../../context/user";
+import {
+    getToken,
+    removeAdmin,
+    removeFresh,
+    removeToken,
+    setLocalAdmin,
+    setRefresh,
+    setToken
+} from "../../../utils/localtoken";
+import jwt_decode from "jwt-decode";
 
 function Basic() {
     const [rememberMe, setRememberMe] = useState(false);
@@ -74,7 +83,32 @@ function Basic() {
                     setToken(access);
                     setRefresh(refresh);
                     setLogin(dispatchUser, true);
-                    navigate("/dashboard");
+                    const jwt_token = getToken();
+                    const access_obj = jwt_decode(jwt_token);
+                    $.ajax({
+                        'url': "http://localhost:8000/settings/getinfo/",
+                        type: "get",
+                        headers: {
+                            'Authorization': "Bearer " + jwt_token,
+                        },
+                        data: {
+                            user_id: access_obj.user_id,
+                        },
+                        success: resp => {
+                            console.log(resp);
+                            if (resp.result === "success") {
+                                setLogin(dispatchUser, true);
+                                setUsername(dispatchUser, resp.id);
+                                if (resp.is_admin === true) setLocalAdmin(true);
+                                navigate("/dashboard");
+                            } else {
+                                removeToken();
+                                removeFresh();
+                                removeAdmin();
+                                setLogin(dispatchUser, false);
+                            }
+                        }
+                    })
                 },
                 error: () => {
                     setErrorMessage("账号或密码错误");

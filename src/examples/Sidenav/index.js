@@ -44,7 +44,7 @@ import {setMiniSidenav, setTransparentSidenav, setWhiteSidenav, useMaterialUICon
 
 // user context
 import {setLogin, useUserController} from "../../context/user";
-import {removeFresh, removeToken} from "../../utils/localtoken";
+import {removeAdmin, removeFresh, removeToken} from "../../utils/localtoken";
 
 function Sidenav({color, brand, brandName, routes, ...rest}) {
     const [controller, dispatch] = useMaterialUIController();
@@ -145,6 +145,7 @@ function Sidenav({color, brand, brandName, routes, ...rest}) {
         setLogin(dispatchUser, false);
         removeToken();
         removeFresh();
+        removeAdmin();
         navigate("/authentication/sign-in");
     }
 
@@ -212,7 +213,7 @@ Sidenav.propTypes = {
     color: PropTypes.oneOf(["primary", "secondary", "info", "success", "warning", "error", "dark"]),
     brand: PropTypes.string,
     brandName: PropTypes.string.isRequired,
-    routes: PropTypes.arrayOf(PropTypes.object).isRequired,
+    // routes: PropTypes.arrayOf(PropTypes.object).isRequired,
 };
 
 export default Sidenav;

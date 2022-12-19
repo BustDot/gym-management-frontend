@@ -38,7 +38,7 @@ import themeDark from "assets/theme-dark";
 
 // RTL plugins
 // Material Dashboard 2 React routes
-import routes from "routes";
+import {routes, userRoutes} from "routes";
 
 // Material Dashboard 2 React contexts
 import {setMiniSidenav, setOpenConfigurator, useMaterialUIController} from "context";
@@ -47,7 +47,7 @@ import {setMiniSidenav, setOpenConfigurator, useMaterialUIController} from "cont
 import brandWhite from "assets/images/logo-ct.png";
 import brandDark from "assets/images/logo-ct-dark.png";
 
-import {setLogin, useUserController} from "./context/user";
+import {setLogin, setUsername, useUserController} from "./context/user";
 
 // Path configuration
 import SignIn from "layouts/authentication/sign-in";
@@ -56,11 +56,12 @@ import Dashboard from "./layouts/dashboard";
 import Tables from "./layouts/tables";
 import Profile from "./layouts/profile";
 
-import {getToken, hasToken, removeFresh, removeToken} from "./utils/localtoken";
+import {getToken, hasAdmin, hasToken, removeAdmin, removeFresh, removeToken, setLocalAdmin} from "./utils/localtoken";
 import $ from "jquery";
 import jwt_decode from 'jwt-decode';
 import CoachTables from "./layouts/tables/coachtable";
 import CourseTables from "./layouts/tables/coursetable";
+import SelectTables from "./layouts/tables/selecttable";
 
 export default function App() {
     const [controller, dispatch] = useMaterialUIController();
@@ -80,7 +81,9 @@ export default function App() {
     const {
         login,
         access,
-        refresh
+        refresh,
+        admin,
+        username
     } = UserController;
 
     useEffect(() => {
@@ -100,9 +103,12 @@ export default function App() {
                     console.log(resp);
                     if (resp.result === "success") {
                         setLogin(dispatchUser, true);
+                        setUsername(dispatchUser, resp.id);
+                        if (resp.is_admin === true) setLocalAdmin(true);
                     } else {
                         removeToken();
                         removeFresh();
+                        removeAdmin();
                         setLogin(dispatchUser, false);
                     }
                 }
@@ -180,13 +186,27 @@ export default function App() {
     return (
         <ThemeProvider theme={darkMode ? themeDark : theme}>
             <CssBaseline/>
-            {hasToken() && layout === "dashboard" && (
+            {hasAdmin() && layout === "dashboard" && (
                 <>
                     <Sidenav
                         color={sidenavColor}
                         brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
                         brandName="宏德健身房"
                         routes={routes}
+                        onMouseEnter={handleOnMouseEnter}
+                        onMouseLeave={handleOnMouseLeave}
+                    />
+                    <Configurator/>
+                    {configsButton}
+                </>
+            )}
+            {!hasAdmin() && layout === "dashboard" && (
+                <>
+                    <Sidenav
+                        color={sidenavColor}
+                        brand={(transparentSidenav && !darkMode) || whiteSidenav ? brandDark : brandWhite}
+                        brandName="宏德健身房"
+                        routes={userRoutes()}
                         onMouseEnter={handleOnMouseEnter}
                         onMouseLeave={handleOnMouseLeave}
                     />
@@ -203,9 +223,14 @@ export default function App() {
                 <Route path="/users"
                        element={hasToken() ? <Tables/> : <Navigate replace to="/authentication/sign-in"/>}/>
                 <Route path="/coaches"
-                       element={hasToken() ? <CoachTables/> : <Navigate replace to="/authentication/sign-in"/>}/>
+                       element={hasToken() ? <CoachTables/> :
+                           <Navigate replace to="/authentication/sign-in"/>}/>
                 <Route path="/courses"
-                       element={hasToken() ? <CourseTables/> : <Navigate replace to="/authentication/sign-in"/>}/>
+                       element={hasToken() ? <CourseTables/> :
+                           <Navigate replace to="/authentication/sign-in"/>}/>
+                <Route path="/select"
+                       element={hasToken() ? <SelectTables/> :
+                           <Navigate replace to="/authentication/sign-in"/>}/>
                 <Route path="/authentication/sign-in"
                        element={hasToken() ? <Navigate replace to="/dashboard"/> : <SignIn/>}/>
                 <Route path="/authentication/sign-up"
