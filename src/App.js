@@ -217,7 +217,7 @@ export default function App() {
             <Routes>
                 {/*{getRoutes(routes)}*/}
                 <Route path="/dashboard"
-                       element={hasToken() ? <Dashboard/> : <Navigate replace to="/authentication/sign-in"/>}/>
+                       element={hasToken() && login ? <Dashboard/> : <Navigate replace to="/authentication/sign-in"/>}/>
                 <Route path="/users/:user_id"
                        element={hasToken() ? <Profile/> : <Navigate replace to="/authentication/sign-in"/>}/>
                 <Route path="/users"
@@ -232,7 +232,7 @@ export default function App() {
                        element={hasToken() ? <SelectTables/> :
                            <Navigate replace to="/authentication/sign-in"/>}/>
                 <Route path="/authentication/sign-in"
-                       element={hasToken() ? <Navigate replace to="/dashboard"/> : <SignIn/>}/>
+                       element={hasToken() && login ? <Navigate replace to="/dashboard"/> : <SignIn/>}/>
                 <Route path="/authentication/sign-up"
                        element={hasToken() ? <Navigate replace to="/dashboard"/> : <SignUp/>}/>
                 <Route path="/*" element={<Navigate replace to="/authentication/sign-in"/>}/>
