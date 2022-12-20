@@ -77,7 +77,7 @@ function CoachTables() {
         {Header: "操作", accessor: "action", align: "center"}
     ]
 
-    const updateCoachList = () => {
+    const updateCoachList = async () => {
         fetch("http://localhost:8000/coach/")
             .then((res) => res.json())
             .then((data) => {
@@ -107,7 +107,7 @@ function CoachTables() {
     }
 
     useEffect(() => {
-        updateCoachList()
+        updateCoachList();
     }, [])
 
     const handleCreateCoach = () => {
@@ -133,10 +133,10 @@ function CoachTables() {
                     setAge(data.age);
                     setPhone(data.phone);
                     setAvatar(data.avatar);
-                })
+                    openAddCoach();
+                }).then(() => updateCoachList());
         }
-        updateCoachList();
-        openAddCoach();
+
     }
 
     return (
